@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>DHANA PHOTOS - Videos</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            padding: 35px 20px;
+            font-family: Arial, sans-serif;
+            text-align: center;
+            color: white;
+            background:
+                radial-gradient(circle at top left, #173b72, transparent 40%),
+                radial-gradient(circle at bottom right, #3b075c, transparent 45%),
+                #050816;
+        }
+
+        h1 {
+            color: #00eaff;
+            font-size: 42px;
+            letter-spacing: 4px;
+            text-shadow: 0 0 8px #00eaff, 0 0 20px #006eff;
+        }
+
+        h2 {
+            color: #ff00d4;
+            text-shadow: 0 0 12px #ff00d4;
+        }
+
+        input[type="file"] {
+            margin: 20px 5px;
+            padding: 12px;
+            max-width: 100%;
+            border: 2px solid #00eaff;
+            border-radius: 10px;
+            background: #101936;
+            color: white;
+            box-shadow: 0 0 12px #00eaff;
+        }
+
+        button,
+        .download-btn {
+            display: inline-block;
+            margin: 8px;
+            padding: 12px 22px;
+            border: 2px solid #ff00d4;
+            border-radius: 10px;
+            background: #180d35;
+            color: white;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+            text-decoration: none;
+            box-shadow: 0 0 12px #ff00d4;
+        }
+
+        button:hover,
+        .download-btn:hover {
+            background: #ff00d4;
+            color: #050816;
+        }
+
+        #message {
+            margin: 20px;
+            color: #00ff99;
+            font-weight: bold;
+        }
+
+        #videoGallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 22px;
+            margin-top: 35px;
+        }
+
+        .video-box {
+            padding: 15px;
+            border: 1px solid #263b78;
+            border-radius: 15px;
+            background: rgba(10, 20, 50, 0.8);
+        }
+
+        video {
+            width: 100%;
+            max-height: 300px;
+            border: 2px solid #00eaff;
+            border-radius: 15px;
+            box-shadow: 0 0 10px #00eaff, 0 0 25px #073cff;
+        }
+
+        .back-home {
+            display: inline-block;
+            margin-top: 35px;
+            color: #00eaff;
+            font-weight: bold;
+            text-decoration: none;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>DHANA PHOTOS</h1>
+
+    <h2>Upload Your Videos</h2>
+
+    <input type="file" id="videoInput" accept="video/*">
+
+    <br>
+
+    <button id="uploadBtn">Upload Video</button>
+
+    <p id="message"></p>
+
+    <div id="videoGallery"></div>
+
+    <a class="back-home" href="index.html">Back to Home</a>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <script>
+        const supabaseUrl = "https://mzexilwgrncubwyhehhj.supabase.co";
+
+        const supabaseKey =
+            "sb_publishable_Tn3UJ55T4HS-4GwSVrFljg_u7KqwVh2";
+
+        const supabaseClient =
+            supabase.createClient(supabaseUrl, supabaseKey);
+
+        const videoInput = document.getElementById("videoInput");
+        const uploadBtn = document.getElementById("uploadBtn");
+        const message = document.getElementById("message");
+        const videoGallery = document.getElementById("videoGallery");
+
+        uploadBtn.addEventListener("click", async () => {
+            const file = videoInput.files[0];
+
+            if (!file) {
+                message.textContent = "Please select a video first.";
+                return;
+            }
+
+            const fileName = Date.now() + "-" + file.name;
+
+            message.textContent = "Uploading video...";
+
+            const { error } = await supabaseClient
+                .storage
+                .from("videos")
+                .upload(fileName, file);
+
+            if (error) {
+                message.textContent = "Upload failed: " + error.message;
+                return;
+            }
+
+            message.textContent = "Video uploaded successfully!";
+            videoInput.value = "";
+
+            loadVideos();
+        });
+
+        async function loadVideos() {
+            videoGallery.innerHTML = "";
+
+            const { data, error } = await supabaseClient
+                .storage
+                .from("videos")
+                .list();
+
+            if (error) {
+                message.textContent = "Cannot load videos: " + error.message;
+                return;
+            }
+
+            data.forEach(file => {
+                const { data: publicUrlData } =
+                    supabaseClient
+                        .storage
+                        .from("videos")
+                        .getPublicUrl(file.name);
+
+                const box = document.createElement("div");
+                box.className = "video-box";
+
+                const video = document.createElement("video");
+                video.src = publicUrlData.publicUrl;
+                video.controls = true;
+
+                const download = document.createElement("a");
+                download.href = publicUrlData.publicUrl;
+                download.download = file.name;
+                download.textContent = "Download";
+                download.className = "download-btn";
+
+                const del = document.createElement("button");
+                del.textContent = "Delete";
+
+                del.onclick = async () => {
+                    const confirmDelete =
+                        confirm("Delete this video?");
+
+                    if (!confirmDelete) return;
+
+                    const { error } = await supabaseClient
+                        .storage
+                        .from("videos")
+                        .remove([file.name]);
+
+                    if (error) {
+                        message.textContent =
+                            "Delete failed: " + error.message;
+                    } else {
+                        message.textContent = "Video deleted!";
+                        loadVideos();
+                    }
+                };
+
+                box.appendChild(video);
+                box.appendChild(document.createElement("br"));
+                box.appendChild(download);
+                box.appendChild(del);
+
+                videoGallery.appendChild(box);
+            });
+        }
+
+        loadVideos();
+    </script>
+
+</body>
+
+</html>

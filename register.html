@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Create Account - DHANA PHOTOS</title>
+
+  <style>
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: #050816;
+      color: white;
+      font-family: Arial, sans-serif;
+    }
+
+    .box {
+      width: 90%;
+      max-width: 400px;
+      padding: 30px;
+      background: #0b1025;
+      border: 1px solid #00d9ff;
+      border-radius: 15px;
+      box-shadow: 0 0 25px rgba(0, 217, 255, 0.25);
+      box-sizing: border-box;
+    }
+
+    h1 {
+      text-align: center;
+      color: #00d9ff;
+      margin-bottom: 25px;
+    }
+
+    input {
+      width: 100%;
+      padding: 13px;
+      margin: 8px 0;
+      box-sizing: border-box;
+      border: 1px solid #333b5c;
+      border-radius: 8px;
+      background: #050816;
+      color: white;
+      outline: none;
+    }
+
+    button {
+      width: 100%;
+      padding: 13px;
+      margin-top: 15px;
+      border: none;
+      border-radius: 8px;
+      background: #00d9ff;
+      color: #001018;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    button:hover {
+      opacity: 0.85;
+    }
+
+    .login {
+      text-align: center;
+      margin-top: 20px;
+    }
+
+    a {
+      color: #00d9ff;
+      text-decoration: none;
+    }
+
+    #message {
+      text-align: center;
+      margin-top: 15px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="box">
+    <h1>DHANA PHOTOS</h1>
+
+    <h2>Create Account</h2>
+
+    <input type="email" id="email" placeholder="Enter Gmail" required>
+
+    <input type="password" id="password" placeholder="Create Password" required>
+
+    <input type="password" id="confirmPassword" placeholder="Confirm Password" required>
+
+    <button onclick="createAccount()">Create Account</button>
+
+    <p id="message"></p>
+
+    <div class="login">
+      Already have an account?
+      <a href="login.html">Login</a>
+    </div>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import {
+      getAuth,
+      createUserWithEmailAndPassword
+    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDUNIpAlkbhi-AEnmy-CGxQLRdp1tvDkpQ",
+      authDomain: "dhana-photos.firebaseapp.com",
+      projectId: "dhana-photos",
+      storageBucket: "dhana-photos.firebasestorage.app",
+      messagingSenderId: "785350883394",
+      appId: "1:785350883394:web:dab26e07df8bfb797015db"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    window.createAccount = async function () {
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
+      const confirmPassword = document.getElementById("confirmPassword").value;
+      const message = document.getElementById("message");
+
+      if (password !== confirmPassword) {
+        message.textContent = "Passwords do not match!";
+        return;
+      }
+
+      try {
+        await createUserWithEmailAndPassword(auth, email, password);
+
+        message.textContent = "Account created successfully!";
+
+        setTimeout(() => {
+          window.location.href = "login.html";
+        }, 1500);
+
+      } catch (error) {
+        message.textContent = error.message;
+      }
+    };
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login - DHANA PHOTOS</title>
+
+  <style>
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: #050816;
+      color: white;
+      font-family: Arial, sans-serif;
+    }
+
+    .box {
+      width: 90%;
+      max-width: 400px;
+      padding: 30px;
+      background: #0b1025;
+      border: 1px solid #00d9ff;
+      border-radius: 15px;
+      box-sizing: border-box;
+    }
+
+    h1 {
+      text-align: center;
+      color: #00d9ff;
+    }
+
+    input {
+      width: 100%;
+      padding: 13px;
+      margin: 8px 0;
+      box-sizing: border-box;
+      border-radius: 8px;
+      border: 1px solid #333b5c;
+      background: #050816;
+      color: white;
+    }
+
+    button {
+      width: 100%;
+      padding: 13px;
+      margin-top: 15px;
+      border: none;
+      border-radius: 8px;
+      background: #00d9ff;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    a {
+      color: #00d9ff;
+    }
+
+    p {
+      text-align: center;
+    }
+
+    #message {
+      margin-top: 15px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="box">
+    <h1>DHANA PHOTOS</h1>
+    <h2>Login</h2>
+
+    <input type="email" id="email" placeholder="Enter Gmail">
+    <input type="password" id="password" placeholder="Enter Password">
+
+    <button onclick="login()">Login</button>
+
+    <p id="message"></p>
+
+    <p>
+      <a href="forgot-password.html">Forgot Password?</a>
+    </p>
+
+    <p>
+      Don't have an account?
+      <a href="register.html">Create Account</a>
+    </p>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import {
+      getAuth,
+      signInWithEmailAndPassword
+    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDUNIpAlkbhi-AEnmy-CGxQLRdp1tvDkpQ",
+      authDomain: "dhana-photos.firebaseapp.com",
+      projectId: "dhana-photos",
+      storageBucket: "dhana-photos.firebasestorage.app",
+      messagingSenderId: "785350883394",
+      appId: "1:785350883394:web:dab26e07df8bfb797015db"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    window.login = async function () {
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
+      const message = document.getElementById("message");
+
+      try {
+        await signInWithEmailAndPassword(auth, email, password);
+        message.textContent = "Login successful!";
+
+        setTimeout(() => {
+          window.location.href = "index.html";
+        }, 1000);
+      } catch (error) {
+        message.textContent = error.code + " - " + error.message;
+      }
+    };
+  </script>
+</body>
+</html>

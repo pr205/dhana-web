@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>DHANA PHOTOS - Special Moments</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            padding: 35px 20px;
+            font-family: Arial, sans-serif;
+            text-align: center;
+            color: white;
+            background:
+                radial-gradient(circle at top left, #173b72, transparent 40%),
+                radial-gradient(circle at bottom right, #3b075c, transparent 45%),
+                #050816;
+        }
+
+        h1 {
+            color: #00eaff;
+            font-size: 42px;
+            letter-spacing: 4px;
+            text-shadow: 0 0 8px #00eaff, 0 0 20px #006eff;
+        }
+
+        h2 {
+            color: #ff00d4;
+            text-shadow: 0 0 12px #ff00d4;
+        }
+
+        input[type="file"] {
+            margin: 20px 5px;
+            padding: 12px;
+            max-width: 100%;
+            border: 2px solid #00eaff;
+            border-radius: 10px;
+            background: #101936;
+            color: white;
+            box-shadow: 0 0 12px #00eaff;
+        }
+
+        button {
+            margin: 8px;
+            padding: 12px 22px;
+            border: 2px solid #ff00d4;
+            border-radius: 10px;
+            background: #180d35;
+            color: white;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 0 12px #ff00d4;
+        }
+
+        button:hover {
+            background: #ff00d4;
+            color: #050816;
+        }
+
+        #message {
+            margin: 20px;
+            color: #00ff99;
+            font-weight: bold;
+        }
+
+        #gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 22px;
+            margin-top: 35px;
+        }
+
+        .moment-box {
+            padding: 15px;
+            border: 1px solid #263b78;
+            border-radius: 15px;
+            background: rgba(10, 20, 50, 0.8);
+        }
+
+        img,
+        video {
+            width: 100%;
+            max-height: 300px;
+            object-fit: cover;
+            border: 2px solid #00eaff;
+            border-radius: 15px;
+            box-shadow: 0 0 10px #00eaff, 0 0 25px #073cff;
+        }
+
+        .back-home {
+            display: inline-block;
+            margin-top: 35px;
+            color: #00eaff;
+            font-weight: bold;
+            text-decoration: none;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>DHANA PHOTOS</h1>
+    <h2>Special Moments</h2>
+
+    <input type="file" id="fileInput" accept="image/*,video/*">
+
+    <br>
+
+    <button id="uploadBtn">Upload Moment</button>
+
+    <p id="message"></p>
+
+    <div id="gallery"></div>
+
+    <a class="back-home" href="index.html">Back to Home</a>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <script>
+        const supabaseUrl =
+            "https://mzexilwgrncubwyhehhj.supabase.co";
+
+        const supabaseKey =
+            "sb_publishable_Tn3UJ55T4HS-4GwSVrFljg_u7KqwVh2";
+
+        const supabaseClient =
+            supabase.createClient(supabaseUrl, supabaseKey);
+
+        const fileInput = document.getElementById("fileInput");
+        const uploadBtn = document.getElementById("uploadBtn");
+        const message = document.getElementById("message");
+        const gallery = document.getElementById("gallery");
+
+        uploadBtn.addEventListener("click", async () => {
+            const file = fileInput.files[0];
+
+            if (!file) {
+                message.textContent =
+                    "Please select a photo or video first.";
+                return;
+            }
+
+            const fileName = Date.now() + "-" + file.name;
+
+            message.textContent = "Uploading...";
+
+            const { error } = await supabaseClient
+                .storage
+                .from("moments")
+                .upload(fileName, file);
+
+            if (error) {
+                message.textContent =
+                    "Upload failed: " + error.message;
+                return;
+            }
+
+            message.textContent =
+                "Moment uploaded successfully!";
+
+            fileInput.value = "";
+
+            loadMoments();
+        });
+
+        async function loadMoments() {
+            gallery.innerHTML = "";
+            message.textContent = "Loading moments...";
+
+            const { data, error } = await supabaseClient
+                .storage
+                .from("moments")
+                .list("", {
+                    limit: 100,
+                    sortBy: {
+                        column: "name",
+                        order: "asc"
+                    }
+                });
+
+            if (error) {
+                console.error(error);
+
+                message.textContent =
+                    "Cannot load moments: " + error.message;
+
+                return;
+            }
+
+            message.textContent = "";
+
+            data.forEach(file => {
+                const { data: publicUrlData } =
+                    supabaseClient
+                        .storage
+                        .from("moments")
+                        .getPublicUrl(file.name);
+
+                const box = document.createElement("div");
+                box.className = "moment-box";
+
+                let media;
+
+                if (/\.(mp4|webm|mov|avi|mkv)$/i.test(file.name)) {
+                    media = document.createElement("video");
+                    media.controls = true;
+                } else {
+                    media = document.createElement("img");
+                    media.alt = "Special moment";
+                }
+media.src = publicUrlData.publicUrl;
+box.appendChild(media);
+
+const deleteBtn = document.createElement("button");
+deleteBtn.textContent = "Delete Moment";
+
+deleteBtn.onclick = async () => {
+    if (!confirm("Delete this moment?")) return;
+
+    const { error } = await supabaseClient
+        .storage
+        .from("moments")
+        .remove([file.name]);
+
+    if (error) {
+        message.textContent = "Delete failed: " + error.message;
+    } else {
+        message.textContent = "Moment deleted!";
+        loadMoments();
+    }
+};
+
+box.appendChild(deleteBtn);
+gallery.appendChild(box);
+              
+            });
+        }
+
+        loadMoments();
+    </script>
+
+</body>
+</html>

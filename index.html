@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>DHANA PHOTOS</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background: #050816;
+            color: white;
+            overflow-x: hidden;
+        }
+
+        nav {
+            width: 100%;
+            height: 75px;
+            background: rgba(3, 7, 20, 0.92);
+            border-bottom: 1px solid rgba(0, 195, 255, 0.25);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 7%;
+            position: fixed;
+            top: 0;
+            z-index: 1000;
+            backdrop-filter: blur(12px);
+        }
+
+        .logo {
+            font-size: 25px;
+            font-weight: bold;
+            letter-spacing: 2px;
+            color: #00d9ff;
+            text-shadow: 0 0 5px #00d9ff, 0 0 15px #00d9ff;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 30px;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: #d8f8ff;
+            text-decoration: none;
+            font-size: 15px;
+        }
+
+        .nav-links a:hover {
+            color: #00d9ff;
+            text-shadow: 0 0 10px #00d9ff;
+        }
+
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 100px 20px 50px;
+            background:
+                radial-gradient(circle at 50% 35%, rgba(0, 183, 255, 0.20), transparent 30%),
+                radial-gradient(circle at 20% 80%, rgba(0, 89, 255, 0.12), transparent 30%),
+                #050816;
+        }
+
+        .hero-content {
+            max-width: 900px;
+        }
+
+        .small-title {
+            color: #00d9ff;
+            font-size: 14px;
+            letter-spacing: 5px;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+        }
+
+        .hero h1 {
+            font-size: clamp(50px, 9vw, 105px);
+            line-height: 1;
+            letter-spacing: 5px;
+            color: white;
+            text-shadow: 0 0 10px #00d9ff, 0 0 30px #008cff;
+        }
+
+        .hero h1 span {
+            color: #00d9ff;
+        }
+
+        .hero p {
+            margin: 25px auto;
+            max-width: 600px;
+            color: #9bb5c7;
+            font-size: 17px;
+            line-height: 1.7;
+        }
+
+        .buttons {
+            margin-top: 35px;
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 14px 28px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+
+        .btn-primary {
+            background: #00bfff;
+            color: #001018;
+            box-shadow: 0 0 10px #00bfff;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 0 25px #00bfff;
+        }
+
+        .btn-outline {
+            border: 1px solid #00bfff;
+            color: #00d9ff;
+        }
+
+        .btn-outline:hover {
+            background: rgba(0, 191, 255, 0.12);
+            box-shadow: 0 0 20px #00bfff;
+        }
+
+        section {
+            padding: 100px 7%;
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .section-title h2 {
+            font-size: 38px;
+        }
+
+        .section-title h2 span {
+            color: #00d9ff;
+        }
+
+        .section-title p {
+            color: #78909c;
+            margin-top: 12px;
+        }
+
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 25px;
+            max-width: 1100px;
+            margin: auto;
+        }
+
+        .card {
+            min-height: 300px;
+            background: linear-gradient(145deg, rgba(0, 217, 255, 0.10), rgba(255, 255, 255, 0.02));
+            border: 1px solid rgba(0, 217, 255, 0.18);
+            border-radius: 15px;
+            padding: 35px 25px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            transition: 0.4s;
+        }
+
+        .card:hover {
+            transform: translateY(-10px);
+            border-color: #00d9ff;
+            box-shadow: 0 0 20px rgba(0, 217, 255, 0.25);
+        }
+
+        .card-icon {
+            width: 75px;
+            height: 75px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 30px;
+            border: 1px solid #00d9ff;
+            box-shadow: 0 0 15px rgba(0, 217, 255, 0.35);
+        }
+
+        .card h3 {
+            margin-top: 20px;
+            font-size: 21px;
+        }
+
+        .card p {
+            margin-top: 10px;
+            color: #8197a5;
+            line-height: 1.5;
+        }
+
+        .card .btn {
+            margin-top: 22px;
+        }
+
+        .about {
+            background: #030610;
+            text-align: center;
+        }
+
+        .about-box {
+            max-width: 800px;
+            margin: auto;
+            padding: 40px;
+            border: 1px solid rgba(0, 217, 255, 0.15);
+            border-radius: 15px;
+            background: rgba(0, 217, 255, 0.025);
+        }
+
+        .about-box p {
+            color: #91a5b2;
+            line-height: 1.8;
+            font-size: 16px;
+        }
+
+        footer {
+            text-align: center;
+            padding: 30px 20px;
+            border-top: 1px solid rgba(0, 217, 255, 0.15);
+            color: #607d8b;
+        }
+
+        footer span {
+            color: #00d9ff;
+        }
+
+        @media (max-width: 800px) {
+            nav {
+                padding: 0 20px;
+            }
+
+            .logo {
+                font-size: 20px;
+            }
+
+            .nav-links {
+                gap: 12px;
+            }
+
+            .nav-links a {
+                font-size: 12px;
+            }
+
+            .cards {
+                grid-template-columns: 1fr;
+            }
+
+            section {
+                padding: 80px 20px;
+            }
+           .btn-secondary {
+               display: inline-block;
+               margin-top: 12px;
+               padding: 11px 24px;
+               border-radius: 30px;
+               text-decoration: none;
+               font-size: 14px;
+               font-weight: bold;
+               color: #ffffff;
+               background: linear-gradient(135deg, #7b2cff, #ff2bd6);
+               box-shadow: 0 0 12px rgba(255, 43, 214, 0.7);
+               transition: 0.3s ease;
+}
+
+.btn-secondary:hover {
+    transform: translateY(-4px) scale(1.04);
+    background: linear-gradient(135deg, #ff2bd6, #7b2cff);
+    box-shadow: 0 0 25px rgba(123, 44, 255, 1);
+}
+}
+        
+    </style>
+</head>
+
+<body>
+
+    <nav>
+        <div class="logo">DHANA PHOTOS</div>
+
+        <ul class="nav-links">
+            <li><a href="#home">Home</a></li>
+            <li><a href="photos.html">Photos</a></li>
+            <li><a href="videos.html">Videos</a></li>
+            <li><a href="moments.html">Moments</a></li>
+            <li><a href="#about">About</a></li>
+        </ul>
+    </nav>
+
+    <section class="hero" id="home">
+        <div class="hero-content">
+
+            <div class="small-title">Welcome To</div>
+
+            <h1>
+                DHANA <span>PHOTOS</span>
+            </h1>
+
+            <p>
+                Capturing moments, memories and beautiful stories.
+                Explore the world of photography with DHANA PHOTOS.
+            </p>
+
+            <div class="buttons">
+                <a href="#gallery" class="btn btn-primary">Explore Gallery</a>
+                <a href="#about" class="btn btn-outline">About Us</a>
+                <a href="register.html" class="btn btn-primary">Create Account</a>
+                <a href="login.html" class="btn btn-outline">Login</a>
+            </div>
+
+        </div>
+    </section>
+
+    <section id="gallery">
+
+        <div class="section-title">
+            <h2>Our <span>Gallery</span></h2>
+            <p>Explore our photography collections</p>
+        </div>
+
+        <div class="cards">
+
+            <div class="card">
+                <div class="card-icon">📸</div>
+
+                <h3>Photos</h3>
+
+                <p>
+                    Beautiful moments captured through the lens.
+                </p>
+
+                <a href="photos.html" class="btn btn-primary">
+                    Open Photos
+                </a>
+                <a href="photos.html" class="btn btn-secondary">See Uploaded Photos</a>
+            </div>
+
+            <div class="card">
+                <div class="card-icon">🎥</div>
+
+                <h3>Videos</h3>
+
+                <p>
+                    Watch and enjoy our special video memories.
+                </p>
+
+                <a href="videos.html" class="btn btn-primary">
+                    Open Videos
+                </a>
+                <a href="videos.html" class="btn btn-secondary">See Uploaded Videos</a> 
+            </div>
+
+            <div class="card">
+                <div class="card-icon">✨</div>
+
+                <h3>Special Moments</h3>
+
+                <p>
+                    Discover unforgettable moments and stories.
+                </p>
+
+                <a href="moments.html" class="btn btn-primary">
+                    Open Moments
+                </a>
+                <a href="moments.html" class="btn btn-secondary">See Special Moments</a>
+            </div>
+
+        </div>
+    </section>
+
+    <section class="about" id="about">
+
+        <div class="section-title">
+            <h2>About <span>DHANA PHOTOS</span></h2>
+        </div>
+
+        <div class="about-box">
+            <p>
+                DHANA PHOTOS is a creative photography space
+                dedicated to capturing beautiful moments and
+                turning them into unforgettable memories.
+                <br><br>
+                Every photo has a story.
+                Every moment deserves to be remembered.
+            </p>
+        </div>
+
+    </section>
+
+    <footer>
+        © 2026 <span>DHANA PHOTOS</span> — All Rights Reserved.
+    </footer>
+
+</body>
+
+</html>
